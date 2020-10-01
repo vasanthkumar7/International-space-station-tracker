@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>isstracker</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+  crossorigin=""/>
+
+  <style>
+      #issmap
+      {
+          height: 600px;
+          width: 500px;
+          border-radius: 10px;
+      }
+      body
+      {
+          background: url("https://i.pinimg.com/originals/1b/f6/9a/1bf69aa5bee5078116d348bde74d4cf0.jpg") no-repeat;
+          color: black;
+          background-size: cover;
+      }
+
+      .de
+      {
+        height: 600px;
+          width: 400px;
+          padding-right: 10px;
+      }
+
+      .details
+      {
+         
+          padding: 20px;
+          
+
+         
+        box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);   
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, .15);
+    
+    backdrop-filter: blur(3px);
+      }
+
+      p
+      {
+          font-size: 25px;
+      }
+
+
+    
+
+
+    
+  </style>
+</head>
+<body>
+
+    <div style="padding-bottom: 10px; display: flex; flex-direction: row;">
+
+        <div class="de">
+            <div class="details">
+                <h1>where is iss</h1>
+        
+           <h4> latitude :<p class="latitude"></p></h4> 
+           <h4>longitude :<p class="longitude"></p></h4> 
+           <h4>altitude(km) :<p class="altitude"></p></h4> 
+           <h4>veloctiy(km/hr) :<p class="veloctiy"></p></h4> 
+           <h4>visibility :<p class="visibility"></p></h4> 
+    
+        
+            </div>
+
+        </div>
+      
+
+
+        
+        <div id="issmap"></div>
+    </div>
+  
+    
+    
+
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+  integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+  crossorigin=""></script>
+
+    <script>
+        const api_url="https://api.wheretheiss.at/v1/satellites/25544";
+        
+
+
+
+        const a=document.querySelector(".latitude");
+        const b=document.querySelector(".longitude");
+        const c=document.querySelector(".altitude");
+        const d=document.querySelector(".veloctiy");
+        const e=document.querySelector(".visibility");
+        
+
+        var map = L.map('issmap').setView([0, 0],1);
+       
+
+       const tiles= L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+const issicon=L.icon({
+    iconUrl:'iss.png',
+    iconSize:[50,32],
+    iconAnchor:[25,16]
+    });
+    var marker=L.marker([0,0],{icon:issicon}).addTo(map);
+
+
+        async function getiss()
+        {
+            const response=await fetch(api_url);
+            console.log(response);
+            const data=await response.json();
+        
+           
+
+            a.innerHTML=data.latitude;
+            b.innerHTML=data.longitude;
+            c.innerHTML=data.altitude;
+            d.innerHTML=data.velocity;
+            e.innerHTML=data.visibility;
+            map.fitBounds([
+    [data.latitude+15, data.longitude+15],
+    [data.latitude-15, data.longitude-15]
+]);
+           marker.setLatLng([data.latitude,data.longitude]);
+           
+      
+
+           
+        }
+
+       
+        setInterval(getiss,1000);
+    </script>
+</body>
+</html>
